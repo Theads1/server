@@ -39,22 +39,24 @@ router.delete("/:id", async (req,res) =>{
 //get product
 router.get("/find/:id", async (req,res) =>{
     try {
-        const {id} = req.body;
-         const product=await pool.query("SELECT * FROM products WHERE product_id = $1, ", [id]);
-        res.status(200).json(product)
-        
+        const {id} = req.params;
+        const product = await pool.query("SELECT * FROM products WHERE product_id = $1", [id]);
+        console.log(product)
+        res.status(200).json(product);        
     } catch (error) {
         console.error(error)
-        res.status(500).send("server error");
+        res.status(500).json("server error");
     }
 }
 
 )
 //query
-router.get("/products", async (req,res) =>{
-    const {title, category}= req.query;
+router.get("/merch", async (req,res) =>{
+    // const {title, category}= req.query;
     try {
-         const products=await pool.query("SELECT * FROM products WHERE title = $1 OR category = $2", [title, category]);
+         const products=await pool.query("SELECT * FROM products");
+         
+
         res.status(200).json(products)
         
     } catch (error) {

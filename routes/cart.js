@@ -1,12 +1,13 @@
 const {authorization} = require("../middleware/authorization.js");
 const pool = require("../db.js");
 
+
 const router = require("express").Router();
 //update cart
 router.put("/:id", authorization, async (req,res) =>{
     try {
         const {pid, id, quantity} = req.params;
-         const updatedCart=await pool.query("UPDATE carts SET product_id = $1, product_quantity =$2 WHERE cart_id = $3", [pid, quantity, id]);
+         const updatedCart = await pool.query("UPDATE carts SET product_id = $1, product_quantity =$2 WHERE cart_id = $3", [pid, quantity, id]);
 
         res.status(200).json(updatedCart)
         
@@ -17,7 +18,6 @@ router.put("/:id", authorization, async (req,res) =>{
 })
 
 //delete cart
-
 router.delete("/:id",authorization, async (req,res) =>{
     try {
         const {id} = req.body;

@@ -5,5 +5,5 @@ CREATE TABLE orders(
     quantity INTEGER,
     amount FLOAT NOT NULL,
     address TEXT NOT NULL,
-    status TEXT 
+    status TEXT
 );
