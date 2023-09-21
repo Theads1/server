@@ -41,13 +41,13 @@ router.get("/find/:id", async (req,res) =>{
     try {
         const {id} = req.params;
         const product = await pool.query("SELECT * FROM products WHERE product_id = $1", [id]);
-        console.log(product)
         res.status(200).json(product);        
     } catch (error) {
         console.error(error)
         res.status(500).json("server error");
     }
 }
+
 
 )
 //query
