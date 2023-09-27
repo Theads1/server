@@ -2,7 +2,6 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const {PORT = 5000} = process.env;
 const pool= require("./db.js");
 
 //mid
@@ -11,8 +10,12 @@ app.use(cors());
 
 //ROUTES
 
-//Register and login
+//Register and login 
 app.use("/auth", require("./routes/jwtRegister.js"));
+
+//profile
+
+app.use("/api", require("./routes/profile.js"))
 
 // others
 //products
@@ -25,6 +28,6 @@ app.use("/api", require("./routes/order.js"))
 
 
 
-app.listen(PORT, ()=>{
+app.listen(5000, ()=>{
     console.log("server running on 5000");
 })

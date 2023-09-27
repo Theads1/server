@@ -2,14 +2,16 @@ const router = require("express").Router();
 const pool = require("../db.js");
 const CryptoJS = require("crypto-js");
 const jwtGen = require("../util/jwtAuth");
-const {authorization} = require("../middleware/authorization.js")
+const {authorization} = require("../middleware/authorization.js");
+const {validation} = require("../middleware/validation.js");
+
 router.get("/logintest", (req,res)=>{
-    res.send("connection success");
+    res.json("connection success");
 })
 
 //Register
 
-router.post("/register",  async (req, res) =>{
+router.post("/register", validation, async (req, res) =>{
     try {
         //username, email, password
 
@@ -17,7 +19,7 @@ router.post("/register",  async (req, res) =>{
         
 
         //if exists, send error
-        const user = await pool.query("SELECT * FROM users WHERE username=$1",[name]);
+        const user = await pool.query("SELECT * FROM users WHERE email=$1",[email]);
         if(user.rows.length !==0){
             return res.status(401).json("user already exists..");
         }
@@ -46,26 +48,26 @@ router.post("/register",  async (req, res) =>{
 
 //login
 
-router.post("/login", async (req,res) => {
+router.post("/login", validation, async (req,res) => {
     try {
         //destructor req.body
 
-        const {name, password} = req.body;
+        const {email, password} = req.body;
 
         //check if user doesn't exist, if not show error
-        const users = await pool.query("SELECT * FROM users WHERE username = $1", [name]);
+        const users = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
 
         if (users.rows.length === 0){
-            return res.status(401).json("username or password incorrect");
+            return res.status(401).json("email or password incorrect");
         } 
 
         //decrypt and check if password matches username in database
         const hashwords=CryptoJS.AES.decrypt(users.rows[0].password, process.env.PASS_SEC);
         const deCryptpass = hashwords.toString(CryptoJS.enc.Utf8);
 
-        
+
        if ( deCryptpass !== password){
-        return res.status(401).send("username or password incorrect");
+        return res.status(401).json("email or password incorrect");
        } 
        
 
@@ -73,6 +75,7 @@ router.post("/login", async (req,res) => {
         //if yes, give jwt token
 
         const token = jwtGen(users.rows[0].user_id);
+
         res.json({token});
 
     } catch (error) {
@@ -83,7 +86,7 @@ router.post("/login", async (req,res) => {
 
 //constantly verify token
 
-router.get("/is-verify", authorization, async (req,res) =>{
+router.get("/verify", authorization, async (req,res) =>{
     try{
 
         res.json(true);
@@ -120,10 +123,10 @@ router.get("/:id", async(req,res)=>{
 })
 
 //delete user
-router.delete("/:id", authorization, async (req,res) =>{
+router.delete("/:id", async (req,res) =>{
     try {
-        const {id, name} = req.body;
-         await pool.query("DELETE FROM users WHERE username = $1 RETURNING *", [name]);
+        const {id} = req.body;
+         await pool.query("DELETE FROM users WHERE user_id = $1 RETURNING *", [id]);
         res.status(200).json("User Deleted")
         
     } catch (error) {
@@ -135,6 +138,5 @@ router.delete("/:id", authorization, async (req,res) =>{
 )
 
 
-// access private info
 
 module.exports = router;

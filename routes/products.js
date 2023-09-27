@@ -50,21 +50,48 @@ router.get("/find/:id", async (req,res) =>{
 
 
 )
-//query
-router.get("/merch", async (req,res) =>{
-    // const {title, category}= req.query;
-    try {
-         const products=await pool.query("SELECT * FROM products");
-         
+//search
+router.get("/merch/search", async (req,res) =>{
+ const {q}= req.query;
 
-        res.status(200).json(products)
+    try {
+
+    const products = await pool.query("SELECT * FROM products");
+    const keys=["title", "description","category"] ;
+    const search = (data)=>{
+        return  data.filter((item)=>
+        keys.some((key)=>item[key].toLowerCase().includes(q))
+        );
+    };
+         
+        res.json(search(products.rows))
         
     } catch (error) {
         console.error(error)
         res.status(500).send("server error");
     }
 }
+)
 
+router.get("/merch", async (req,res) =>{
+    const {category} = req.query;
+    try {
+        let product;
+        if (!category){
+            product = await pool.query("SELECT * FROM products");
+
+
+        }else{
+            product = await pool.query("SELECT * FROM products WHERE category = $1", [category]);
+        }
+
+        res.status(200).json(product);   
+        
+    } catch (error) {
+        console.error(error)
+        res.status(500).send("server error");
+    }
+}
 )
 
 //update product
