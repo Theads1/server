@@ -73,11 +73,34 @@ router.get("/merch/search", async (req,res) =>{
 }
 )
 
+//get all and by cat
+
 router.get("/merch", async (req,res) =>{
     const {category} = req.query;
     try {
         let product;
         if (!category){
+            product = await pool.query("SELECT * FROM products");
+
+
+        }else{
+            product = await pool.query("SELECT * FROM products WHERE category = $1", [category]);
+        }
+
+        res.status(200).json(product);   
+        
+    } catch (error) {
+        console.error(error)
+        res.status(500).send("server error");
+    }
+}
+)
+//sort and filter
+router.get("/merch/sort", async (req,res) =>{
+    const {rate, price} = req.query;
+    try {
+        let product;
+        if (price){
             product = await pool.query("SELECT * FROM products");
 
 
