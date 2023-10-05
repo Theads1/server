@@ -1,4 +1,4 @@
-// require('dotenv').config();
+require('dotenv').config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -28,6 +28,6 @@ app.use("/api", require("./routes/order.js"))
 
 
 
-app.listen(5000, ()=>{
+app.listen(PROCESS.ENV.DATABASE_port, ()=>{
     console.log("server running on 5000");
 })
