@@ -28,6 +28,6 @@ app.use("/api", require("./routes/order.js"))
 
 
 
-app.listen(PROCESS.ENV.PORT, ()=>{
+app.listen(process.env.PORT, ()=>{
     console.log("server running on 5000");
 })
