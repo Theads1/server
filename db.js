@@ -1,8 +1,8 @@
 const Pool= require("pg").Pool
 const pool= new Pool(
-  {user:"capstone_z1iz_user",
-  password:"pXwm5Vl1mScCZHiQzPDNuLNeRBAYzdaD",
-  host:"dpg-ckb2qm9kms5s73b5rcog-a.ohio-postgres.render.com",
+  {user:PROCESS.ENV.DATABASE_user,
+  password:PROCESS.ENV.DATABASE_password,
+  host:PROCESS.ENV.DATABASE_URL,
   port:5432,
   database:"capstone_z1iz",
   ssl : {
